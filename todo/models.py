@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
+
 
 class Todo(models.Model):
     STATUSES_CHOISES = [
@@ -19,7 +21,7 @@ class Todo(models.Model):
     status = models.CharField(max_length=15, choices=STATUSES_CHOISES, default='NOT_STARTED')
     priority = models.CharField(max_length=15,choices=PRIORITIES_CHOISES, default='LOW')
     created_date = models.DateTimeField(auto_now_add=True)
-    deadline_date = models.DateTimeField(null=True, blank=True)
+    deadline_date = models.DateTimeField(null=True, blank=True, default=datetime.datetime.now() + datetime.timedelta(days=1, hours=3))
     close_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):

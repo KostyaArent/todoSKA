@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 
 
@@ -24,6 +24,18 @@ def signupuser(request):
         else:
             #missmatch passwords
             return render(request, 'todo/signupuser.html', {'form':UserCreationForm(), 'error':"Didn't match passwords"})
+
+
+def loginuser(request):
+    if request.method == 'GET':
+        return render(request, 'todo/loginuser.html', {'form':AuthenticationForm()})
+    else:
+        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
+        if user is None:
+            return render(request, 'todo/loginuser.html', {'form':AuthenticationForm(), 'error':'Username and password didn\'t match'})
+        else:
+            login(request, user)
+            return redirect('currenttodos')
 
 
 def logoutuser(request):

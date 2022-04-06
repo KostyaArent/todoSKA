@@ -1,0 +1,18 @@
+{% extends 'todo/base.html' %}
+
+
+{% block content %}
+
+<h1>Edit todo</h1>
+
+<form method="POST">
+{% csrf_token %}
+{{ form.as_p }}
+<button type="submit">Save</button>
+</form>
+{% if status == 'Saved!' %}
+  <h2 style="color:green">Todo is {{ status }}</h2>
+{% elif status == 'Not saved!' %}
+  <h2 style="color:red">Todo is {{ status }}</h2>
+{% endif %}
+{% endblock %}

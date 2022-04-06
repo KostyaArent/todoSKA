@@ -1,8 +1,32 @@
 {% extends 'todo/base.html' %}
 
-
 {% block content %}
-
-Current
-
+<ul> <h1>Your Todos:</h1>
+<hr>
+<table>
+{% for todo in todos %}
+  <li>
+    <a href="{% url 'detailtodo' todo.id %}">
+      <tr style=
+    {% if todo.priority == '3' %}
+      <tr style="color: red;">{{ todo.title }}</tr>
+    {% elif todo.priority == '2' %}
+      <tr style="color: yellow;">{{ todo.title }}</tr>
+    {% elif todo.priority == '1' %}
+      <tr style="color: black">{{ todo.title }}</tr>
+    {% endif %}
+    </a>
+    <tr>
+      {% if todo.description %}
+        {{ todo.description }}
+      {% endif %}
+    </tr>
+    <tr>
+      {{ todo.status }}
+    </tr>
+  </li>
+  <hr>
+  {% endfor %}
+</table>
+</ul>
 {% endblock %}

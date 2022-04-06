@@ -1,9 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
+import datetime
+
 from .forms import TodoForm
+from .models import Todo
 
 
 def home(request):
@@ -58,5 +62,25 @@ def createtodo(request):
         except ValueError:
             return render(request, 'todo/createtodo.html', {'form':TodoForm(), 'error':'Wrong data passed in! Try again ;)'})
 
+
 def currenttodos(request):
-    return render(request, 'todo/currenttodos.html')
+    todos = Todo.objects.filter(executor=request.user, close_date__isnull=True)
+    return render(request, 'todo/currenttodos.html', {'todos': todos})
+
+
+def detailtodo(request, todo_pk):
+    todo = get_object_or_404(Todo, pk=todo_pk, executor=request.user)
+    status = ''
+    if request.method == 'POST':
+        form = TodoForm(request.POST, instance=todo)
+        if request.POST['status'] in ['COMPLITED', 'FAILED']:
+            form.instance.close_date = datetime.datetime.now()
+        if form.is_valid():
+            form.save()
+            status = 'Saved!'
+        else:
+            status = 'Not saved!'
+            return render(request, 'todo/detailtodo.html', {'form': form, 'status': status})
+    else:
+        form = TodoForm(instance=todo)
+    return render(request, 'todo/detailtodo.html', {'todo': todo, 'form': form, 'status': status})

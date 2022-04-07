@@ -66,12 +66,12 @@ def createtodo(request):
 
 
 def currenttodos(request):
-    todos = Todo.objects.filter(executor=request.user, close_date__isnull=True)
+    todos = Todo.objects.filter(executor=request.user, close_date__isnull=True).order_by('-priority')
     return render(request, 'todo/currenttodos.html', {'todos': todos})
 
 
 def closedtodos(request):
-    todos = Todo.objects.filter(executor=request.user, close_date__isnull=False)
+    todos = Todo.objects.filter(executor=request.user, close_date__isnull=False).order_by('-close_date')
     return render(request, 'todo/currenttodos.html', {'todos': todos})
 
 

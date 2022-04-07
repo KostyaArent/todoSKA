@@ -1,32 +1,80 @@
 {% extends 'todo/base.html' %}
 
 {% block content %}
-<ul> <h1>Your Todos:</h1>
+<ul>
+<h1>Your Todos:</h1>
 <hr>
+<div>
+  <a href="{% url 'currenttodos' %}">Active</a>
+  <a href="{% url 'closedtodos' %}">Closed</a>
+</div>
+
+{% if not todos %}
+  <br>
+  <p>No todos</p>
+{% else %}
 <table>
+  <colgroup>
+    <col span="4" style="background-color:LightCyan">
+    <col span="1" style="background-color:Crimson">
+    <col span="1" style="background-color:LightCyan">
+  </colgroup>
+  <tr>
+    <th>TITLE</th>
+    <th>DESCRIPTION</th>
+    <th>PRIORITY</th>
+    <th>CREATE</th>
+    <th>DEADLINE</th>
+    <th>STAUS</th>
+  </tr>
+
 {% for todo in todos %}
-  <li>
-    <a href="{% url 'detailtodo' todo.id %}">
-      <tr style=
-    {% if todo.priority == '3' %}
-      <tr style="color: red;">{{ todo.title }}</tr>
-    {% elif todo.priority == '2' %}
-      <tr style="color: yellow;">{{ todo.title }}</tr>
-    {% elif todo.priority == '1' %}
-      <tr style="color: black">{{ todo.title }}</tr>
-    {% endif %}
+  <tr>
+
+      <td>
+    <a href="{% url 'detailtodo' todo.id %}" style="text-decoration:none; color: black;">
+      {{ todo.title }}
     </a>
-    <tr>
+    </td>
+    <td>
       {% if todo.description %}
         {{ todo.description }}
       {% endif %}
-    </tr>
-    <tr>
-      {{ todo.status }}
-    </tr>
-  </li>
-  <hr>
+    </td>
+    {% if todo.priority == '3' %}
+      <td style="color: red;">{{ todo.get_priority_display }}</td>
+    {% elif todo.priority == '2' %}
+      <td style="color: DarkOrange;">{{ todo.get_priority_display }}</td>
+    {% elif todo.priority == '1' %}
+      <td style="color: black;">{{ todo.get_priority_display }}</td>
+    {% endif %}
+    <td>
+      {{ todo.created_date }}
+    </td>
+    <td>
+      {{ todo.deadline_date }}
+    </td>
+    <td>
+      <form id="Todo{{ todo.pk }}" class="closeTodo" method="POST" action="{% url 'closetodo' todo.pk %}">
+        {% csrf_token %}
+      <select form ="Todo{{ todo.pk }}">
+      {% for choise in todo.STATUSES_CHOISES %}
+        {% if choise.0 == todo.status %}
+          <option value="{{ choise.0 }}" selected>{{ choise.1 }}</option>
+        {% else %}
+          <option value="{{ choise.0 }}">{{ choise.1 }}</option>
+        {% endif %}
+      {% endfor %}
+      </select>
+      </form>
+    </td>
+    <td>
+      <button type="submit">Save</button>
+    </td>
+
+  </tr>
   {% endfor %}
 </table>
+{% endif %}
 </ul>
 {% endblock %}

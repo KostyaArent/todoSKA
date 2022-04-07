@@ -1,4 +1,4 @@
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 {% if user.is_authenticated %}
 Logged In as {{ user.username }}
 
@@ -14,3 +14,40 @@ Logged In as {{ user.username }}
 {% block content %}
 {% endblock %}
 <br>
+
+<script>
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+};
+
+let csrftoken = getCookie('csrftoken');
+
+$(document).ready(function () {
+  $('.closeTodo').change(function (e) {
+    const url = $(this).attr("action");
+    const status = $("select").closest($(e.target)).val()
+    let data = JSON.stringify({
+        status: status,
+    });
+    console.log(data)
+    let response = fetch(url, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json',
+            "X-CSRFToken": csrftoken },
+    });
+  })
+})
+</script>

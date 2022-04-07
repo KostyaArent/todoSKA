@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 import datetime
+import json
 
 from .forms import TodoForm
 from .models import Todo
@@ -68,6 +69,11 @@ def currenttodos(request):
     return render(request, 'todo/currenttodos.html', {'todos': todos})
 
 
+def closedtodos(request):
+    todos = Todo.objects.filter(executor=request.user, close_date__isnull=False)
+    return render(request, 'todo/currenttodos.html', {'todos': todos})
+
+
 def detailtodo(request, todo_pk):
     todo = get_object_or_404(Todo, pk=todo_pk, executor=request.user)
     status = ''
@@ -84,3 +90,16 @@ def detailtodo(request, todo_pk):
     else:
         form = TodoForm(instance=todo)
     return render(request, 'todo/detailtodo.html', {'todo': todo, 'form': form, 'status': status})
+
+
+def closetodo(request, todo_pk):
+    todo = get_object_or_404(Todo, pk=todo_pk, executor=request.user)
+    if request.method == "POST":
+        status = json.loads(request.body).get('status')
+        todo.status = status
+        if status in ['COMPLITED', 'FAILED']:
+            todo.close_date = datetime.datetime.now()
+            todo.save()
+        else:
+            todo.save()
+    return HttpResponse({'status':'200'})

@@ -17,7 +17,7 @@
   <colgroup>
     <col span="4" style="background-color:LightCyan">
     <col span="1" style="background-color:Crimson">
-    <col span="1" style="background-color:LightCyan">
+    <col span="2" style="background-color:LightCyan">
   </colgroup>
   <tr>
     <th>TITLE</th>
@@ -26,6 +26,7 @@
     <th>CREATE</th>
     <th>DEADLINE</th>
     <th>STAUS</th>
+    <th>CLOSED</th>
   </tr>
 
 {% for todo in todos %}
@@ -49,10 +50,10 @@
       <td style="color: black;">{{ todo.get_priority_display }}</td>
     {% endif %}
     <td>
-      {{ todo.created_date }}
+      {{ todo.created_date|date:'H:i d.m.y' }}
     </td>
     <td>
-      {{ todo.deadline_date }}
+      {{ todo.deadline_date|date:'H:i d.m.y' }}
     </td>
     <td>
       <form id="Todo{{ todo.pk }}" class="closeTodo" method="POST" action="{% url 'closetodo' todo.pk %}">
@@ -68,9 +69,11 @@
       </select>
       </form>
     </td>
+    {% if todo.close_date %}
     <td>
-      <button type="submit">Save</button>
+      {{ todo.close_date|date:'H:i d.m.y' }}
     </td>
+    {% endif %}
 
   </tr>
   {% endfor %}

@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.sessions.models import Session
 from django.db import IntegrityError
 import datetime
 import json
@@ -93,13 +94,22 @@ def detailtodo(request, todo_pk):
 
 
 def closetodo(request, todo_pk):
-    todo = get_object_or_404(Todo, pk=todo_pk, executor=request.user)
-    if request.method == "POST":
-        status = json.loads(request.body).get('status')
-        todo.status = status
-        if status in ['COMPLITED', 'FAILED']:
-            todo.close_date = datetime.datetime.now()
-            todo.save()
-        else:
-            todo.save()
-    return HttpResponse({'status':'200'})
+    try:
+        session = Session.objects.get(session_key=request.session.session_key)
+    except Session.DoesNotExist:
+        session = None
+    if session is not None:
+        uid = session.get_decoded().get('_auth_user_id')
+        user = User.objects.get(pk=uid)
+        todo = get_object_or_404(Todo, pk=todo_pk, executor=user)
+        if request.method == "POST":
+            status = json.loads(request.body).get('status')
+            todo.status = status
+            if status in ['COMPLITED', 'FAILED']:
+                todo.close_date = datetime.datetime.now()
+                todo.save()
+            else:
+                todo.save()
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=403)

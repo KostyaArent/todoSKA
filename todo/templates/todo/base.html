@@ -1,6 +1,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 {% if user.is_authenticated %}
-Logged In as {{ user.username }}
+Logged in as {{ user.username }}
 
 <form action="{% url 'logoutuser' %}" method="POST">
 {% csrf_token %}
@@ -16,6 +16,10 @@ Logged In as {{ user.username }}
 <br>
 
 <script>
+let csrftoken = getCookie('csrftoken');
+let sessionid = getCookie('sessionid');
+
+
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -31,7 +35,22 @@ function getCookie(name) {
     return cookieValue;
 };
 
-let csrftoken = getCookie('csrftoken');
+
+async function fetchCloseTodo(url, data, csrftoken) {
+  const response = await fetch(url, {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken },
+  });
+  if (!response.ok) {
+    const message = `An error has occured: ${response.status}`;
+    throw new Error(message);
+  }
+  console.log(`${response.status}`);
+}
+
 
 $(document).ready(function () {
   $('.closeTodo').change(function (e) {
@@ -40,13 +59,8 @@ $(document).ready(function () {
     let data = JSON.stringify({
         status: status,
     });
-    console.log(data)
-    let response = fetch(url, {
-        method: 'POST',
-        body: data,
-        headers: { 'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json',
-            "X-CSRFToken": csrftoken },
+    fetchCloseTodo(url, data, csrftoken).catch(error => {
+      console.log(error.message); // 'An error has occurred: 404'
     });
   })
 })

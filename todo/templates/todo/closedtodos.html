@@ -15,17 +15,15 @@
 {% else %}
 <table>
   <colgroup>
-    <col span="4" style="background-color:LightCyan">
-    <col span="1" style="background-color:Crimson">
-    <col span="2" style="background-color:LightCyan">
+    <col span="7" style="background-color:LightCyan">
   </colgroup>
   <tr>
     <th>TITLE</th>
     <th>DESCRIPTION</th>
     <th>PRIORITY</th>
     <th>CREATE</th>
-    <th>DEADLINE</th>
     <th>STATUS</th>
+    <th>CLOSED</th>
   </tr>
 
 {% for todo in todos %}
@@ -52,9 +50,6 @@
       {{ todo.created_date|date:'H:i d.m.y' }}
     </td>
     <td>
-      {{ todo.deadline_date|date:'H:i d.m.y' }}
-    </td>
-    <td>
       <form id="Todo{{ todo.pk }}" class="closeTodo" method="POST" action="{% url 'closetodo' todo.pk %}">
         {% csrf_token %}
       <select form ="Todo{{ todo.pk }}">
@@ -68,6 +63,12 @@
       </select>
       </form>
     </td>
+    {% if todo.close_date %}
+    <td>
+      {{ todo.close_date|date:'H:i d.m.y' }}
+    </td>
+    {% endif %}
+
   </tr>
   {% endfor %}
 </table>

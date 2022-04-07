@@ -8,7 +8,8 @@
 <form method="POST">
 {% csrf_token %}
 {{ form.as_p }}
-<button type="submit">Save</button>
+<input formmethod="POST" type="submit" value="Save">
+<input formaction="{% url 'deletetodo' todo.pk %}" formmethod="POST" type="submit" value="Delete" />
 </form>
 {% if status == 'Saved!' %}
   <h2 style="color:green">Todo is {{ status }}</h2>

@@ -3,10 +3,12 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from django.contrib.sessions.models import Session
 from django.db import IntegrityError
 import datetime
 import json
+
 
 from .forms import TodoForm
 from .models import Todo
@@ -44,13 +46,13 @@ def loginuser(request):
             login(request, user)
             return redirect('currenttodos')
 
-
+@login_required
 def logoutuser(request):
     if request.method == 'POST':
         logout(request)
         return redirect('home')
 
-
+@login_required
 def createtodo(request):
     if request.method == 'GET':
         return render(request, 'todo/createtodo.html', {'form':TodoForm()})
@@ -64,17 +66,27 @@ def createtodo(request):
         except ValueError:
             return render(request, 'todo/createtodo.html', {'form':TodoForm(), 'error':'Wrong data passed in! Try again ;)'})
 
+@login_required
+def deletetodo(request, todo_pk):
+    todo = get_object_or_404(Todo, pk=todo_pk, executor=request.user)
+    if request.method == 'POST':
+        todo.delete()
+        return redirect('currenttodos')
+    else:
+        form = TodoForm(instance=todo)
+        return render(request, 'todo/detailtodo.html', {'todo': todo, 'form': form, 'status': 'Todo is Not deleted!', 'error':'Request method is not POST!'})
 
+@login_required
 def currenttodos(request):
     todos = Todo.objects.filter(executor=request.user, close_date__isnull=True).order_by('-priority')
     return render(request, 'todo/currenttodos.html', {'todos': todos})
 
-
+@login_required
 def closedtodos(request):
     todos = Todo.objects.filter(executor=request.user, close_date__isnull=False).order_by('-close_date')
-    return render(request, 'todo/currenttodos.html', {'todos': todos})
+    return render(request, 'todo/closedtodos.html', {'todos': todos})
 
-
+@login_required
 def detailtodo(request, todo_pk):
     todo = get_object_or_404(Todo, pk=todo_pk, executor=request.user)
     status = ''

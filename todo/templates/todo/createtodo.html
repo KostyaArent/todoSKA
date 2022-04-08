@@ -1,16 +1,29 @@
 {% extends 'todo/base.html' %}
-
+{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row g-3 align-items-center" style="text-align: center;">
-<h1>Create</h1>
+<div class="container" style="
+    background-color:#d1e36e;
+    height:auto;
+    padding: 20px;
+    text-align: left;
+    text-decoration: none;
+    display: block;
+    position: inherit;
+    border-radius: 8px;
+    justify-content: space-around;
+    top: 5%">
+<div class="container align-items-center" style="position:relative;">
+<h1>Create todoSKA</h1>
 
 <h2>{{ error }}</h2>
 
-<form method="POST">
+<form class="bootstrap" method="POST">
 {% csrf_token %}
-{{ form.as_p }}
-<button type="submit">Create</button>
+{{ form|crispy }}
+<br>
+<button type="submit" class="btn btn-outline-secondary">Create</button>
 </form>
+</div>
 </div>
 {% endblock %}

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'todo',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +126,6 @@ LOGIN_URL = '/login'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CRISPY FORMS TEMPLATES
+CRISPY_TEMPLATE_PACK = 'bootstrap'

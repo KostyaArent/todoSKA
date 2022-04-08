@@ -2,18 +2,14 @@
 
 {% block content %}
 <ul>
-<h1>Your Todos:</h1>
+<h1>Your Active TodoSKAs:</h1>
 <hr>
-<div>
-  <a href="{% url 'currenttodos' %}">Active</a>
-  <a href="{% url 'closedtodos' %}">Closed</a>
-</div>
-
 {% if not todos %}
   <br>
   <p>No todos</p>
 {% else %}
-<table>
+
+<table class="table table-striped">
   <colgroup>
     <col span="4" style="background-color:LightCyan">
     <col span="1" style="background-color:Crimson">
@@ -57,7 +53,7 @@
     <td>
       <form id="Todo{{ todo.pk }}" class="closeTodo" method="POST" action="{% url 'closetodo' todo.pk %}">
         {% csrf_token %}
-      <select form ="Todo{{ todo.pk }}">
+      <select class="form-select" form ="Todo{{ todo.pk }}">
       {% for choise in todo.STATUSES_CHOISES %}
         {% if choise.0 == todo.status %}
           <option value="{{ choise.0 }}" selected>{{ choise.1 }}</option>
@@ -72,9 +68,5 @@
   {% endfor %}
 </table>
 {% endif %}
-<form>
-  {% csrf_token %}
-  <input formaction="{% url 'createtodo' %}" formmethod="GET" type="submit" value="Add new" />
-</form>
 </ul>
 {% endblock %}

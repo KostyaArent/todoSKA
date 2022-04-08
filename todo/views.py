@@ -46,11 +46,13 @@ def loginuser(request):
             login(request, user)
             return redirect('currenttodos')
 
+
 @login_required
 def logoutuser(request):
     if request.method == 'POST':
         logout(request)
         return redirect('home')
+
 
 @login_required
 def createtodo(request):
@@ -66,6 +68,7 @@ def createtodo(request):
         except ValueError:
             return render(request, 'todo/createtodo.html', {'form':TodoForm(), 'error':'Wrong data passed in! Try again ;)'})
 
+
 @login_required
 def deletetodo(request, todo_pk):
     todo = get_object_or_404(Todo, pk=todo_pk, executor=request.user)
@@ -76,15 +79,18 @@ def deletetodo(request, todo_pk):
         form = TodoForm(instance=todo)
         return render(request, 'todo/detailtodo.html', {'todo': todo, 'form': form, 'status': 'Todo is Not deleted!', 'error':'Request method is not POST!'})
 
+
 @login_required
 def currenttodos(request):
     todos = Todo.objects.filter(executor=request.user, close_date__isnull=True).order_by('-priority')
     return render(request, 'todo/currenttodos.html', {'todos': todos})
 
+
 @login_required
 def closedtodos(request):
     todos = Todo.objects.filter(executor=request.user, close_date__isnull=False).order_by('-close_date')
     return render(request, 'todo/closedtodos.html', {'todos': todos})
+
 
 @login_required
 def detailtodo(request, todo_pk):
@@ -98,7 +104,7 @@ def detailtodo(request, todo_pk):
             form.save()
             status = 'Saved!'
         else:
-            status = 'Not saved!'
+            status = 'Error, Not saved!'
             return render(request, 'todo/detailtodo.html', {'form': form, 'status': status})
     else:
         form = TodoForm(instance=todo)
@@ -119,9 +125,9 @@ def closetodo(request, todo_pk):
             todo.status = status
             if status in ['COMPLITED', 'FAILED']:
                 todo.close_date = datetime.datetime.now()
-                todo.save()
-            else:
-                todo.save()
-        return HttpResponse(status=200)
+            todo.save()
+            return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=405)
     else:
         return HttpResponse(status=403)

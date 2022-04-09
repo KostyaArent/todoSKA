@@ -1,7 +1,39 @@
 {% extends 'todo/base.html' %}
 
 {% block content %}
-<ul>
+<div id="backgroundContainer" class="container" style="
+    width: 40%;
+    height: 0px;
+    padding: 0px;
+    display: block;
+    border-radius: 8px;
+    margin: 4px 2px;
+    position:absolute;
+    opacity:0.5;
+    top:20%;
+    left:30%;
+    z-index:2;
+    background-color: white;
+    ">
+</div>
+<div id="contentContainer" class="container" style="
+    width: 40%;
+    height: auto;
+    border-color:-internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
+    border-width: 1px;
+    border-style: solid;
+    padding: 0px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+    margin: 4px 2px;
+    border-radius: 8px;
+    position:absolute;
+    top:20%;
+    left:30%;
+    z-index:3;">
+<div class="container">
 <h1>Your Active TodoSKAs:</h1>
 <hr>
 {% if not todos %}
@@ -9,7 +41,7 @@
   <p>No todos</p>
 {% else %}
 
-<table class="table table-striped">
+<table class="table table-striped" style="width:100%">
   <colgroup>
     <col span="4" style="background-color:LightCyan">
     <col span="1" style="background-color:Crimson">
@@ -50,7 +82,7 @@
     <td>
       {{ todo.deadline_date|date:'H:i d.m.y' }}
     </td>
-    <td>
+    <td width=20%>
       <form id="Todo{{ todo.pk }}" class="closeTodo" method="POST" action="{% url 'closetodo' todo.pk %}">
         {% csrf_token %}
       <select class="form-select" form ="Todo{{ todo.pk }}">
@@ -68,5 +100,6 @@
   {% endfor %}
 </table>
 {% endif %}
-</ul>
+</div>
+</div>
 {% endblock %}

@@ -13,7 +13,7 @@ import json
 from .forms import TodoForm
 from .models import Todo
 
-
+@login_required
 def home(request):
     return render(request, 'todo/home.html')
 
@@ -102,12 +102,14 @@ def detailtodo(request, todo_pk):
             form.instance.close_date = datetime.datetime.now()
         if form.is_valid():
             form.save()
-            status = 'Saved!'
+            status = 'saved!'
         else:
-            status = 'Error, Not saved!'
-            return render(request, 'todo/detailtodo.html', {'form': form, 'status': status})
+            status = 'not saved!'
+            print(status)
+            return render(request, 'todo/detailtodo.html', {'todo': todo, 'form': form, 'status': status})
     else:
         form = TodoForm(instance=todo)
+        print('there')
     return render(request, 'todo/detailtodo.html', {'todo': todo, 'form': form, 'status': status})
 
 

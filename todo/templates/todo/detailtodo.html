@@ -1,28 +1,32 @@
 {% extends 'todo/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
+<div id="createDivBackground" class="container"></div>
+<div id="createDiv" class="container">
+  <div id="createCardDiv" class="container">
+    <h1>Edit todoSKA</h1>
+    <h2>{{ error }}</h2>
+    <form class="bootstrap" method="POST">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <hr>
+      <div style="
+          display: flex;
+          flex-direction: row;
+">
+        <input class="btn btn-outline-secondary" formmethod="POST" type="submit"  value="Save" >
+        <input class="btn btn-outline-secondary" formaction="{% url 'deletetodo' todo.pk %}" formmethod="POST" type="submit" value="Delete" />
+        {% if status == 'saved!' %}
+          <h2 style="color:green">Todo is {{ status }}</h2>
+        {% elif status == 'not saved!' %}
+          <h2 style="color:red">Todo is {{ status }}</h2>
+        {% endif %}
 
-<div class="row align-items-center" style="width:50;
-    --bs-gutter-x: 1.5rem;
-    --bs-gutter-y: 0;
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: calc(-1 * var(--bs-gutter-y));
-    margin-right: 1;
-    margin-left: 1;">
+      </div>
+    </form>
 
-<h1>Edit todoSKA</h1>
-
-<form class="bootstrap" method="POST">
-{% csrf_token %}
-{{ form.as_p }}
-<input class="btn btn-outline-secondary" formmethod="POST" type="submit"  value="Save">
-<input class="btn btn-outline-secondary" formaction="{% url 'deletetodo' todo.pk %}" formmethod="POST" type="submit" value="Delete" />
-</form>
-{% if status == 'Saved!' %}
-  <h2 style="color:green">Todo is {{ status }}</h2>
-{% elif status == 'Not saved!' %}
-  <h2 style="color:red">Todo is {{ status }}</h2>
-{% endif %}
+  </div>
+<br>
 </div>
 {% endblock %}

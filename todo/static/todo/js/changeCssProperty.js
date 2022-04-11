@@ -10,6 +10,13 @@ function widthUpdate(elmId, propernyName, propertyValue) {
 };
 
 $(document).ready(function () {
-  var contentWidth = getCssProperty("contentContainer", "height");
-  widthUpdate("backgroundContainer", "height", contentWidth);
+  let contentWidth;
+  if (document.getElementById("contentContainer")){
+      contentWidth = getCssProperty("contentContainer", "height");
+    widthUpdate("backgroundContainer", "height", contentWidth);
+  } else if (document.getElementById("createDiv")) {
+      contentWidth = getCssProperty("createDiv", "height");
+      widthUpdate("createDivBackground", "height", contentWidth);
+    };
+  contentWidth = null;
 });

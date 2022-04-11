@@ -1,16 +1,26 @@
 {% extends 'todo/base.html' %}
-
+{% load crispy_forms_tags %}
 
 {% block content %}
 
-<h1>Login</h1>
+<div id="createDivBackground" class="container"></div>
+<div id="createDiv" class="container">
+  <div id="createCardDiv" class="container">
+    <h1>Log In</h1>
 
-<h2>{{ error }}</h2>
+    <h2>{{ error }}</h2>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <input type="submit" class="btn btn-outline-secondary" value="Log In">
+    </form>
 
-<form method="POST">
-{% csrf_token %}
-{{ form.as_p }}
-<button type="submit">Login</button>
-</form>
+    <!-- Remind Passowrd -->
+    <div>
+      <a class="underlineHover" href="#">Forgot Password?</a>
+    </div>
+
+  </div>
+</div>
 
 {% endblock %}
